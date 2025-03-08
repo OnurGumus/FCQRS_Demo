@@ -1,0 +1,8 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+
+nuget FCQRS
+nuget FSharp.Core
+nuget Hocon.Extensions.Configuration
+nuget Microsoft.Extensions.Logging.Console

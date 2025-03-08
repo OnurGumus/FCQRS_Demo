@@ -1,0 +1,31 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Web",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/App/bin/Debug/net9.0/App.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/App",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "justMyCode": true,
+            "requireExactSource": true, 
+            "suppressJITOptimizations": true, // it's better to set true for local debugging
+            "enableStepFiltering": false, // to step into properties
+            "symbolOptions": {
+                "searchMicrosoftSymbolServer": false, // get pdb files from ms symbol server
+               "searchNuGetOrgSymbolServer": false,
+                "moduleFilter": {
+                    "mode": "loadAllButExcluded",
+                    "excludedModules": []
+                }
+            },
+            
+        },
+    ]
+}
