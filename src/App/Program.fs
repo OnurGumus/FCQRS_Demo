@@ -1,24 +1,43 @@
-﻿open Microsoft.Extensions.Configuration
-open Microsoft.Extensions.Logging
-open Hocon.Extensions.Configuration
-open System.IO
-open FCQRS.Model.Data
+﻿open FCQRS.Model.Data
 open BootStrap
 
-let register  cid userName =
-        let actorId: ActorId = userName |> ValueLens.CreateAsResult |> Result.value
-        async {
-            let! subscribe = userSubs cid actorId (User.Register(userName)) (fun (e: User.Event) -> e.IsRegisterSucceeded)
+let register cid userName password =
 
-            match (subscribe: FCQRS.Common.Event<_>) with
-            | { EventDetails = User.RegisterSucceeded
-                Version = v } -> return Ok v
-            | { EventDetails = _; Version = v } ->
-                return Error [ sprintf "Registration failed for user %s" <| actorId.ToString() ]
-        }
+    let actorId: ActorId = userName |> ValueLens.CreateAsResult |> Result.value
 
+    let command = User.Register(userName, password)
 
-let cid : CID = System.Guid.NewGuid().ToString()  |> ValueLens.CreateAsResult |> Result.value
-let userName = "test"
-let result = register cid userName |> Async.RunSynchronously
+    let condition = fun (e: User.Event) -> 
+        e.IsRegisterSucceeded
+        || e.IsAlreadyRegistered
+
+    let subscribe = userSubs cid actorId command condition
+
+    async {
+        match! subscribe with
+        | { EventDetails = User.RegisterSucceeded _
+            Version = v } -> return Ok v
+
+        | { EventDetails = User.AlreadyRegistered
+            Version = _ } -> return Error [ sprintf "User %s is already registered" <| actorId.ToString() ]
+
+        | _ ->
+            return Error [ sprintf "Registration failed for user %s" <| actorId.ToString() ]
+    }
+
+let cid: CID =
+    System.Guid.NewGuid().ToString() |> ValueLens.CreateAsResult |> Result.value
+
+let userName = "test user"
+
+let password = "password"
+
+let result = register cid userName password |> Async.RunSynchronously
 printfn "%A" result
+
+let cid2: CID =
+    System.Guid.NewGuid().ToString() |> ValueLens.CreateAsResult |> Result.value
+let resultFailure = register cid2 userName password |> Async.RunSynchronously
+printfn "%A" resultFailure
+
+System.Console.ReadKey() |> ignore

@@ -4,7 +4,6 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Hocon.Extensions.Configuration
 open System.IO
-open FCQRS.Model.Data
 
 let configBuilder =
     ConfigurationBuilder()
