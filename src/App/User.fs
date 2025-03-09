@@ -1,4 +1,4 @@
-﻿module User
+module User
 
 open FCQRS.Common
 
