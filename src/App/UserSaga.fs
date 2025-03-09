@@ -33,7 +33,6 @@ let handleEvent (event: obj) (state: SagaState<SagaData, State>) = //: EventActi
                   Subject = "Your code"
                   Body = $"Your code is {code} !!" }
             |> StateChangedEvent
-        | User.Verified, _ -> Completed |> StateChangedEvent
         | _ -> UnhandledEvent
 
 
@@ -69,7 +68,7 @@ let applySideEffects
 
     | SendingMail mail ->
         NoEffect,
-        None,
+        Some Completed,
         [ { TargetActor = ActorRef(actorRef ())
             Command = mail
             DelayInMs = None } ]
