@@ -24,9 +24,9 @@ let sagaCheck  _ = []
 
 actorApi.InitializeSagaStarter sagaCheck
 
-let userShard = User.Actor.factory env actorApi
+let userShard = User.factory env actorApi
 
-User.Actor.init env actorApi |> ignore
+User.init env actorApi |> ignore
 
 let userSubs cid =  actorApi.CreateCommandSubscription userShard cid
 

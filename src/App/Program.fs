@@ -14,13 +14,11 @@ let password = "password"
 
 let cid1 = cid()
 
-let s = sub.Subscribe((fun e -> e.CorrelationId = cid1), 1, ignore, CancellationToken.None)
+let s = sub.Subscribe((fun e -> e.CorrelationId = cid1), 1)
 let result = register cid1 userName password |> Async.RunSynchronously
 (s |> Async.RunSynchronously).Dispose()
 
 printfn "%A" result
-
-
 
 let resultFailure = register (cid()) userName password |> Async.RunSynchronously
 printfn "%A" resultFailure
