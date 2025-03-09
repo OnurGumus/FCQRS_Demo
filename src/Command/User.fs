@@ -12,11 +12,9 @@ type Command =
     | Login of string
     | Register of string * string
 
-
 type State =
     { Username: string option
       Password: string option }
-
 
 let applyEvent event state =
     match event.EventDetails with
