@@ -30,19 +30,4 @@ User.Actor.init env actorApi |> ignore
 
 let userSubs cid =  actorApi.CreateCommandSubscription userShard cid
 
-let handleEventWrapper env (offsetValue: int64) (event:obj)=
-    let log = (env :> ILoggerFactory).CreateLogger("Event")
-    log.LogInformation("Event: {0}", event.ToString())
-
-    let dataEvent =
-        match event with
-        | :? Event<User.Event> as  event ->
-            printfn "Event: %A" event
-            []
-        | _ -> []
-
-    dataEvent
-
-let offsetCount =  0
-open FCQRS.Query
-let sub:ISubscribe<obj>  = FCQRS.Query.init actorApi offsetCount (handleEventWrapper env)
+let sub handleEventWrapper offsetCount= FCQRS.Query.init actorApi offsetCount (handleEventWrapper env)

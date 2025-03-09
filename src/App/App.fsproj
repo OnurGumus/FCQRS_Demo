@@ -6,6 +6,8 @@
   <ItemGroup>
     <Compile Include="Environments.fs" />
     <Compile Include="Bootstrap.fs" />
+    <Compile Include="Command.fs" />
+    <Compile Include="Query.fs" />
     <Compile Include="Program.fs" />
     <Content Include="paket.references" />
   </ItemGroup>
