@@ -6,7 +6,7 @@ let sub = BootStrap.sub Query.handleEventWrapper 0L
 let cid (): CID =
     System.Guid.NewGuid().ToString() |> ValueLens.CreateAsResult |> Result.value
 
-let userName = "test user"
+let userName = "testuser"
 
 let password = "password"
 
@@ -16,6 +16,13 @@ let s = sub.Subscribe((fun e -> e.CID = cid1), 1)
 let result = register cid1 userName password |> Async.RunSynchronously
 (s |> Async.RunSynchronously).Dispose()
 printfn "%A" result
+
+let code = System.Console.ReadLine() 
+
+let resultVerify = verify (cid()) userName code |> Async.RunSynchronously
+printfn "%A" resultVerify
+
+System.Console.ReadKey() |> ignore
 
 let resultFailure = register (cid()) userName password |> Async.RunSynchronously
 printfn "%A" resultFailure

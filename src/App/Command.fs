@@ -10,13 +10,13 @@ let register cid userName password =
     let command = User.Register(userName, password)
 
     let condition (e: User.Event) =
-        e.IsAlreadyRegistered || e.IsRegisterSucceeded
+        e.IsAlreadyRegistered || e.IsVerificationRequested
 
     let subscribe = userSubs cid actorId command condition
 
     async {
         match! subscribe with
-        | { EventDetails = User.RegisterSucceeded _
+        | { EventDetails = User.VerificationRequested _
             Version = v } -> return Ok v
 
         | { EventDetails = User.AlreadyRegistered
@@ -42,5 +42,25 @@ let login cid userName password =
 
         | { EventDetails = User.LoginFailed
             Version = _ } -> return Error [ sprintf "User %s Login failed" <| actorId.ToString() ]
+        | _ -> return Error [ sprintf "Unexpected event for user %s" <| actorId.ToString() ]
+    }
+
+let verify cid userName code =
+
+    let actorId: ActorId = userName |> ValueLens.CreateAsResult |> Result.value
+
+    let command = User.Verify code
+
+    let condition (e: User.Event) = e.IsVerified || e.IsLoginFailed
+
+    let subscribe = userSubs cid actorId command condition
+
+    async {
+        match! subscribe with
+        | { EventDetails = User.Verified
+            Version = v } -> return Ok v
+        | { EventDetails = User.LoginFailed
+            Version = _ } -> return Error [ sprintf "User %s Login failed" <| actorId.ToString() ]
+
         | _ -> return Error [ sprintf "Unexpected event for user %s" <| actorId.ToString() ]
     }

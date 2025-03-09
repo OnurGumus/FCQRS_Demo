@@ -5,7 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Environments.fs" />
-      <Compile Include="User.fs" />
+    <Compile Include="User.fs" />
+    <Compile Include="SendMail.fs" />
+    <Compile Include="UserSaga.fs" />
     <Compile Include="Bootstrap.fs" />
     <Compile Include="Command.fs" />
     <Compile Include="Query.fs" />
