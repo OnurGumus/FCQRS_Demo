@@ -28,7 +28,7 @@ module Actor =
     let handleCommand (cmd: Command<_>) (state: State) =
         match cmd.CommandDetails, state with
         | Register (userName, password), { Username = None } -> RegisterSucceeded (userName,password) |> PersistEvent
-        | Register _, { Username = Some _ } -> AlreadyRegistered |> PersistEvent
+        | Register _, { Username = Some _ } -> AlreadyRegistered |> DeferEvent
         | Login password1,
           { Username = Some _
             Password = Some password2 } when password1 = password2 -> LoginSucceeded |> PersistEvent

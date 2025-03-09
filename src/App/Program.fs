@@ -7,10 +7,9 @@ let register cid userName password =
 
     let command = User.Register(userName, password)
 
-    let condition = fun (e: User.Event) -> 
-        e.IsRegisterSucceeded
-        || e.IsAlreadyRegistered
-
+    let condition (e: User.Event) = 
+             e.IsAlreadyRegistered || e.IsRegisterSucceeded
+      
     let subscribe = userSubs cid actorId command condition
 
     async {
@@ -20,24 +19,21 @@ let register cid userName password =
 
         | { EventDetails = User.AlreadyRegistered
             Version = _ } -> return Error [ sprintf "User %s is already registered" <| actorId.ToString() ]
-
         | _ ->
             return Error [ sprintf "Registration failed for user %s" <| actorId.ToString() ]
     }
 
-let cid: CID =
+let cid (): CID =
     System.Guid.NewGuid().ToString() |> ValueLens.CreateAsResult |> Result.value
 
 let userName = "test user"
 
 let password = "password"
 
-let result = register cid userName password |> Async.RunSynchronously
+let result = register (cid()) userName password |> Async.RunSynchronously
 printfn "%A" result
 
-let cid2: CID =
-    System.Guid.NewGuid().ToString() |> ValueLens.CreateAsResult |> Result.value
-let resultFailure = register cid2 userName password |> Async.RunSynchronously
+let resultFailure = register (cid()) userName password |> Async.RunSynchronously
 printfn "%A" resultFailure
 
 System.Console.ReadKey() |> ignore
